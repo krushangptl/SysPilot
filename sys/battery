@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 
 # dir and log file setup
 HOME = os.path.expanduser("~")
-LOG_DIR = os.path.join(HOME, ".battery_health_test")
-LOG_FILE = os.path.join(LOG_DIR, "battery_health_test.log")
+LOG_DIR = os.path.join(HOME, ".Monitor")
+LOG_FILE = os.path.join(LOG_DIR, "battery_health.log")
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
