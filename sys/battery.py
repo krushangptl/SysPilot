@@ -32,12 +32,6 @@ def send_notification(title, message, type_="info"):
     subprocess.run(["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"])
 
 
-# battery info
-
-BATTERY_PATH = run_cmds("upower -e | grep BAT")
-BAT_INFO = run_cmds(f"upower -i {BATTERY_PATH}")
-
-
 def parse_upower_output(info):
     """Extract values from upower output"""
     data = dict()
@@ -54,50 +48,94 @@ def parse_upower_output(info):
     return data
 
 
-battery = parse_upower_output(BAT_INFO)
+# battery info
+def get_battery_info():
+    try:
+        BATTERY_PATH = run_cmds("upower -e | grep BAT")
+        BAT_INFO = run_cmds(f"upower -i {BATTERY_PATH}")
+        battery = parse_upower_output(BAT_INFO)
 
-# validate numeric values
-if "energy_full" not in battery or "energy_design" not in battery:
-    print("Error: Unable to read energy values from upower output")
-    exit(1)
+        # validate numeric values
+        if "energy_full" not in battery or "energy_design" not in battery:
+            return None
 
-HEALTH = round((battery["energy_full"] / battery["energy_design"]) * 100, 2)
+        battery["health"] = round(
+            (battery["energy_full"] / battery["energy_design"]) * 100, 2
+        )
+        return battery
+    except Exception as err:
+        print(f"Error getting battery info: {err}")
+        return None
 
-# alerts for charge based on states
 
-if battery["percentage"] < 20 and battery.get("state") == "discharging":
-    send_notification(
-        "Battery Low",
-        f"Charge is at {battery['percentage']}% - please plug in!",
-        "warning",
-    )
+def check_battery_alerts(battery):
+    if not battery:
+        return
 
-if battery["percentage"] > 80 and battery.get("state") == "charging":
-    send_notification(
-        "Battery High",
-        f"Charge is at {battery['percentage']}% - consider unplugging to preserve health.",
-        "info",
-    )
+    # alerts for charge based on states
 
-# todays log data
-log_line = f"{TODAY} | Charge: {battery['percentage']}% | Full: {battery['energy_full']} Wh | Design: {battery['energy_design']} Wh | Health: {HEALTH}%\n"
-with open(LOG_FILE, "a") as file:
-    file.write(log_line)
-
-# compare with yesterday
-try:
-    with open(LOG_FILE) as file:
-        lines = file.readlines()
-except FileNotFoundError:
-    lines = []
-
-yesterday_lines = [line for line in lines if line.startswith(YESTERDAY)]
-if yesterday_lines:
-    yesterday_health = float(yesterday_lines[-1].split("|")[-1].split("%")[0].strip())
-    if HEALTH < yesterday_health:
-        LOSS = round(yesterday_health - HEALTH, 2)
+    if battery["percentage"] < 20 and battery.get("state") == "discharging":
         send_notification(
-            "Battery Health Drop",
-            f"Health decreased by {LOSS}% since yesterday (NOW: {HEALTH}%)",
+            "Battery Low",
+            f"Charge is at {battery['percentage']}% - please plug in!",
             "warning",
         )
+
+    if battery["percentage"] > 80 and battery.get("state") == "charging":
+        send_notification(
+            "Battery High",
+            f"Charge is at {battery['percentage']}% - consider unplugging to preserve health.",
+            "info",
+        )
+
+
+def log_battery_data(battery):
+    if not battery:
+        return
+    # todays log data
+    log_line = f"{TODAY} | Charge: {battery['percentage']}% | Full: {battery['energy_full']} Wh | Design: {battery['energy_design']} Wh | Health: {battery['health']}%\n"
+    with open(LOG_FILE, "a") as file:
+        file.write(log_line)
+
+
+def compare_yesterday(battery):
+    try:
+        with open(LOG_FILE) as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        lines = []
+
+    yesterday_lines = [line for line in lines if line.startswith(YESTERDAY)]
+    if yesterday_lines:
+        yesterday_health = float(
+            yesterday_lines[-1]
+            .split("|")[-1]
+            .split("%")[0]
+            .strip()
+            .replace("Health:", "")
+            .strip()
+        )
+        if battery["health"] < yesterday_health:
+            LOSS = round(yesterday_health - battery["health"], 2)
+            send_notification(
+                "Battery Health Drop",
+                f"Health decreased by {LOSS}% since yesterday (NOW: {battery['health']}%)",
+                "warning",
+            )
+
+
+def main():
+    battery = get_battery_info()
+
+    if not battery:
+        print("Error: Unable to read battery information")
+        return 1
+    check_battery_alerts(battery)
+    log_battery_data(battery)
+    compare_yesterday(battery)
+
+    return 0
+
+
+if __name__ == "__main__":
+    exit(main())
