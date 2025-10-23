@@ -2,4 +2,3 @@ markdown-it-py==4.0.0
 mdurl==0.1.2
 psutil==7.1.1
 Pygments==2.19.2
-rich==14.2.0

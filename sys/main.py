@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
+import time
+from . import battery, cpu, ram, disk, temperatures
 
-import os
-from rich.console import Console
-from rich.table import Table
+CHECK_INTERVAL = 5 * 60
 
-console = Console()
+MODULES = [battery, cpu, ram, disk, temperatures]
 
-def get_cpu_info:
-    cpu_percent = psutil.cpu_percent()
 
+def run_Monitors():
+    for module in MODULES:
+        try:
+            module.main()
+        except Exception as err:
+            print(f"[ERROR] {module.__name__}: {err}")
+
+
+def main():
+    while True:
+        run_Monitors()
+        time.sleep(CHECK_INTERVAL)
+
+
+if __name__ == "__main__":
+    main()
