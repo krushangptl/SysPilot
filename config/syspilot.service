@@ -1,0 +1,10 @@
+[Unit]
+Description=System Health Monitor Daemon
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /your/path/to/syspilot/sys/main.py
+
+[Install]
+WantedBy=default.target
