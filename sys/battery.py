@@ -19,7 +19,7 @@ YESTERDAY = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d | %H:%M:%S")
 # helper functio
 def run_cmds(cmd):
     """Run a shell command and return its output"""
-    return subprocess.check_output(cmd, shell=True, text=True).strip()
+    return subprocess.check_output(cmd.split(), text=True).strip()
 
 
 def send_notification(title, message, type_="info"):
