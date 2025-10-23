@@ -17,7 +17,7 @@ ALERT_SWAP_THRESHOL = 70  # % usage
 
 # helper function
 def send_notification(title, message):
-    subprocess.run("notify-send", title, message)
+    subprocess.run(["notify-send", title, message])
 
 
 def main():
