@@ -34,8 +34,12 @@ def main():
         for entry in entries:
             label = entry.label or name
             current = entry.current
-            high = entry.high if entry.high else "?"
-            crit = entry.critical if entry.critical else "?"
+
+            if current == 0.0:
+                continue
+
+            high = entry.high if entry.high is not None else "?"
+            crit = entry.critical if entry.critical is not None else "?"
 
             line = f"{now} | {label}: {current:.1f}°C (High: {high}, Crit: {crit})"
             log_line.append(line)
