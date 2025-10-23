@@ -12,8 +12,8 @@ LOG_FILE = os.path.join(LOG_DIR, "battery_health.log")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 # dates and time
-TODAY = datetime.now().strftime("%Y-%m-%d")
-YESTERDAY = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+TODAY = datetime.now().strftime("%Y-%m-%d | %H:%M:%S")
+YESTERDAY = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d | %H:%M:%S")
 
 
 # helper functio
