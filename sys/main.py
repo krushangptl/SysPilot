@@ -5,8 +5,6 @@ import battery, cpu, ram, disk, temperatures
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-CHECK_INTERVAL = 5 * 60
-
 MODULES = [battery, cpu, ram, disk, temperatures]
 
 HOME = os.path.expanduser("~")
@@ -18,11 +16,10 @@ logging.basicConfig(filename=LOG_FILE, level=logging.ERROR)
 
 
 def run_Modules(module):
-    for module in MODULES:
-        try:
-            module.main()
-        except Exception as err:
-            print(f"[ERROR] {module.__name__}: {err}")
+    try:
+        module.main()
+    except Exception as err:
+        print(f"[ERROR] {module.__name__}: {err}")
 
 
 def run_Monitors():
@@ -33,9 +30,7 @@ def run_Monitors():
 
 
 def main():
-    while True:
-        run_Monitors()
-        time.sleep(CHECK_INTERVAL)
+    run_Monitors()
 
 
 if __name__ == "__main__":
