@@ -5,6 +5,8 @@ Description=Run Syspilot every 5 minutes
 OnBootSec=1min
 OnUnitActiveSec=5min
 Persistent=true
+AccuracySec=1s
+Unit=syspilot.service
 
 [Install]
 WantedBy=timers.target

@@ -4,7 +4,12 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python3 /your/path/to/syspilot/sys/main.py
+ExecStart=/usr/bin/python3 %h/path/to/syspilot/sys/main.py
+WorkingDirectory=%h/path/to/syspilot/sys
+StandardOutput=journal
+StandardError=journal
+Environment="PATH=/usr/bin:/usr/local/bin"
+RemainAfterExit=no
 
 [Install]
 WantedBy=default.target
