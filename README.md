@@ -72,11 +72,11 @@ SysPilot/
 **Example: Concurrent Execution Pattern**
 
 ```python
-# main.py - Non-blocking parallel monitoring
-with ThreadPoolExecutor(max_workers=len(MODULES)) as executor:
-    futures = [executor.submit(run_module, m) for m in MODULES]
-    for _ in as_completed(futures):
-        pass  # Collect results without blocking
+    with ThreadPoolExecutor(max_workers=len(MODULES)) as executer:
+        futures = [executer.submit(run_Modules, m) for m in MODULES]
+        for _ in futures:
+            pass
+
 ```
 
 ---
