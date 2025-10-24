@@ -16,7 +16,7 @@ ALERT_DISK_THRESHOLD = 85  # % usage
 
 # helper function
 def send_notification(title, message):
-    subprocess.run("notify-send", title, message)
+    subprocess.run(["notify-send", title, message])
 
 
 def main():
@@ -41,13 +41,13 @@ def main():
         if percent > ALERT_DISK_THRESHOLD:
             send_notification(
                 "Disk Space Alert",
-                f"Mount {part.mountpoint} is {percent:.1f}% full"
-                f"({used_gb:.2f}/{total_gb:.2f}) GB",
+                f"Mount {part.mountpoint} is {percent:.1f}% full "
+                f"({used_gb:.2f}/{total_gb:.2f} GB)",
             )
 
         log_line.append(
             f"{now} | {part.device} {part.mountpoint} | {percent:.1f}% used "
-            f"({used_gb:.2f}/{total_gb:.2f}) GB"
+            f"({used_gb:.2f}/{total_gb:.2f} GB"
         )
 
     with open(LOG_FILE, "a") as file:
