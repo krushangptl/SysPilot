@@ -12,7 +12,7 @@ LOG_FILE = os.path.join(LOG_DIR, "ram_usage.log")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 ALERT_RAM_THRESHOLD = 85  # % usage
-ALERT_SWAP_THRESHOL = 70  # % usage
+ALERT_SWAP_THRESHOLD = 70  # % usage
 
 
 # helper function
@@ -35,7 +35,7 @@ def main():
             f"RAM Usage: {ram.percent:.1f}% ({ram_used_gb:.2f}/{ram_total_gb:.2f} GB)",
         )
 
-    if swap.percent > ALERT_SWAP_THRESHOL:
+    if swap.percent > ALERT_SWAP_THRESHOLD:
         send_notification(
             "High SWAP Usage",
             f"SWAP Usage: {swap.percent:.1f}% ({swap_used_gb:.2f}/{swap_total_gb:.2f} GB)",
@@ -43,8 +43,8 @@ def main():
 
     now = datetime.now().strftime("%Y-%m-%d | %H:%M:%S")
     log_line = (
-        f"{now} | RAM: {ram.percent:.1f}% ({ram_used_gb:.2f}/{ram_total_gb:.2f}) GB) "
-        f"| SWAP: {swap.percent:.1f}% ({swap_used_gb:.2f}/{swap_total_gb:.2f}) GB)"
+        f"{now} | RAM: {ram.percent:.1f}% ({ram_used_gb:.2f}/{ram_total_gb:.2f} GB) "
+        f"| SWAP: {swap.percent:.1f}% ({swap_used_gb:.2f}/{swap_total_gb:.2f} GB)"
     )
 
     with open(LOG_FILE, "a") as file:
