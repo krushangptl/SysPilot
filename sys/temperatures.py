@@ -51,7 +51,7 @@ def main():
         file.write("\n".join(log_line) + "\n")
 
     if high_temp:
-        alert_text = "\n".join([f"{label}: {temps:.1f}°C" for label, temp in high_temp])
+        alert_text = "\n".join([f"{label}: {temp:.1f}°C" for label, temp in high_temp])
         send_notification(
             "High Temperature Alert",
             f"The following component are overheating:\n\n{alert_text}\n\n"
