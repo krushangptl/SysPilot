@@ -3,7 +3,7 @@ import time
 import os
 import battery, cpu, ram, disk, temperatures
 import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 
 MODULES = [battery, cpu, ram, disk, temperatures]
 
@@ -25,7 +25,7 @@ def run_Modules(module):
 def run_Monitors():
     with ThreadPoolExecutor(max_workers=len(MODULES)) as executer:
         futures = [executer.submit(run_Modules, m) for m in MODULES]
-        for _ in as_completed(futures):
+        for _ in futures:
             pass
 
 
