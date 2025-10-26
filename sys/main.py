@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import time
 import os
 import battery, cpu, ram, disk, temperatures
 import logging
