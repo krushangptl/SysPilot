@@ -1,33 +1,13 @@
 #!/usr/bin/env python3
 
-import os
-import subprocess
 from datetime import datetime, timedelta
+from utils import get_log_path, run_cmds, zenity_notification, timestamp
 
-# dir and log file setup
-HOME = os.path.expanduser("~")
-LOG_DIR = os.path.join(HOME, ".Monitor")
-LOG_FILE = os.path.join(LOG_DIR, "battery_health.log")
-os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = get_log_path("battery_health.log")
 
 # timing
-TODAY = datetime.now().strftime("%Y-%m-%d | %H:%M:%S")
+TODAY = timestamp()
 YESTERDAY = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-
-
-# run command from script
-def run_cmds(cmd):
-    return subprocess.check_output(cmd.split(), text=True).strip()
-
-
-# notification with zenity
-def send_notification(title, messege, type_):
-    if type_ == "info":
-        subprocess.run(["zenity", "--info", "--title", title, "--text", messege])
-    elif type_ == "warning":
-        subprocess.run(["zenity", "--warning", "--title", title, "--text", messege])
-    # bell sound for notification
-    subprocess.run(["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"])
 
 
 # get battery info
@@ -65,13 +45,13 @@ def battery_alerts(battery):
         return
 
     if battery["percentage"] <= 20 and battery["state"] == "discharging":
-        send_notification(
+        zenity_notification(
             "Battery Low",
             f"Charge is at {battery['percentage']}% - please Plug in!",
             "warning",
         )
     elif battery["percentage"] >= 80 and battery["state"] == "charging":
-        send_notification(
+        zenity_notification(
             "Battery High",
             f"Charge is at {battery['percentage']}% - consider unplug to preserve health!",
             "info",
@@ -93,7 +73,7 @@ def compare_yesterday(battery):
         )
         if battery["health"] < yesterday_health:
             LOSS = round(yesterday_health - battery["health"], 2)
-            send_notification(
+            zenity_notification(
                 "Battery Health Drop",
                 f"Health decreased by {LOSS}% since yesterday ?! (Now: {battery['health']}%)",
                 "warning",
@@ -130,4 +110,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())
