@@ -35,21 +35,22 @@ Runs as a **systemd user service** without root privileges.
 ## Architecture
 
 ```
-SysPilot/
-├── config/
-│   ├── syspilot.service    # Systemd service configuration
-│   └── syspilot.timer      # Systemd timer (runs every 5 minutes)
-├── sys/
-│   ├── __init__.py         # Package initialization
-│   ├── main.py             # Orchestrator with concurrent execution
-│   ├── cpu.py              # CPU usage & temperature monitoring
-│   ├── ram.py              # RAM & SWAP memory monitoring
-│   ├── disk.py             # Disk space monitoring
-│   ├── temperatures.py     # Hardware sensor monitoring
-│   └── battery.py          # Battery health tracking (laptop only)
-├── requirements.txt        # Python dependencies
-├── LICENSE.md              # MIT License
-└── README.md               # READEM
+syspilot/
+├── sys/                       # Core monitoring package
+│   ├── battery.py             # Battery health tracking (laptops only)
+│   ├── cpu.py                 # CPU usage & temperature monitoring
+│   ├── disk.py                # Disk space monitoring
+│   ├── __init__.py            # Package initialization
+│   ├── main.py                # Orchestrator with concurrent execution
+│   ├── ram.py                 # RAM & swap memory monitoring
+│   ├── temperatures.py        # Hardware sensor monitoring
+│   └── utils.py               # Shared helper utilities
+├── config/                    # Systemd integration
+│   ├── syspilot.service       # Systemd service unit
+│   └── syspilot.timer         # Systemd timer (runs every 5 minutes)
+├── requirements.txt           # Python dependencies
+├── LICENSE.md                 # MIT license
+└── README.md                  # Documentation
 ```
 
 **Concurrency Pattern:**
