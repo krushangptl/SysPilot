@@ -1,26 +1,15 @@
 #!/usr/bin/env python3
 
-import os
-import subprocess
 import psutil
-from datetime import datetime
+from utils import get_log_path, zenity_notification, timestamp
 
-HOME = os.path.expanduser("~")
-LOG_DIR = os.path.join(HOME, ".Monitor")
-LOG_FILE = os.path.join(LOG_DIR, "temperatures.log")
-os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = get_log_path("temperatures.log")
 
 ALERT_TEMP_THRESHOLD = 85
 
 
-# helper function
-def send_notification(title, message):
-    subprocess.run(["zenity", "--warning", "--title", title, "--text", message])
-    subprocess.run(["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"])
-
-
 def main():
-    now = datetime.now().strftime("%Y-%m-%d | %H:%M:%S")
+    now = timestamp()
     temps = psutil.sensors_temperatures(fahrenheit=False)
 
     if not temps:
@@ -52,10 +41,11 @@ def main():
 
     if high_temp:
         alert_text = "\n".join([f"{label}: {temp:.1f}°C" for label, temp in high_temp])
-        send_notification(
+        zenity_notification(
             "High Temperature Alert",
             f"The following component are overheating:\n\n{alert_text}\n\n"
             f"Threshold: {ALERT_TEMP_THRESHOLD}°C",
+            "warning",
         )
 
 

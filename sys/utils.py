@@ -11,7 +11,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 
 def get_log_path(filename: str) -> str:
-    return os.path.join(LOG_DIR, "battery_health.log")
+    return os.path.join(LOG_DIR, filename)
 
 
 # timing
@@ -28,8 +28,8 @@ def run_cmds(cmd) -> str:
 
 
 # notification with zenity
-def zenity_notification(title, messege, kind, sound=True):
-    cmd = ["zenity", f"--{kind}", "--title", title, "--text", messege]
+def zenity_notification(title, message, kind, sound=True):
+    cmd = ["zenity", f"--{kind}", "--title", title, "--text", message]
     if kind == "info":
         subprocess.Popen(cmd)
         if sound:
@@ -43,3 +43,11 @@ def zenity_notification(title, messege, kind, sound=True):
                 ["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"]
             )
     # bell sound for notification
+
+
+# notification with notify
+def notify_send_notification(title, message, sound=True):
+    cmd = ["notify-send", title, message]
+    subprocess.Popen(cmd)
+    if sound:
+        subprocess.Popen(["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"])
